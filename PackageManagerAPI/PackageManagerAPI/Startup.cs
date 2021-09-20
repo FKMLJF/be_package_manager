@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using PackageManagerAPI.Helpers;
 using PackageManagerAPI.Models;
 
 namespace PackageManagerAPI
@@ -44,6 +45,8 @@ namespace PackageManagerAPI
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            var cc = new Crawler();
 
        
 
