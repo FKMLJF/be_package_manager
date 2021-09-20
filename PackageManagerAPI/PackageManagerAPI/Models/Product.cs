@@ -19,12 +19,6 @@ namespace PackageManagerAPI.Models
         [Column(TypeName = "float")]
         public float ProductPrice { get; set; }
 
-        [Column(TypeName = "int")]
-        public int ProductQuantity { get; set; }
-
-        [Column(TypeName = "nvarchar(50)")]
-        public string ProductQuantityUnit { get; set; }
-
         public ICollection<Order> Orders { get; set; }
     }
 }
