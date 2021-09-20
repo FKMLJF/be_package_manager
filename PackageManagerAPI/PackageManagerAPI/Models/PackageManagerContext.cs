@@ -20,12 +20,15 @@ namespace PackageManagerAPI.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
-                .HasOne(p => p.Order)
-                .WithMany(b => b.Products);
+            .HasMany(p => p.Orders)
+            .WithMany(p => p.Products)
+            .UsingEntity(j => j.ToTable("ProductOrders"));
 
             modelBuilder.Entity<Order>()
               .HasOne(p => p.User)
               .WithMany(b => b.Orders);
+
+            //modelBuilder.Entity<Product>().HasData(new Product { ProductId = 1,ProductName = "23423", ProductPrice = 1000, ProductQuantity = 1, ProductQuantityUnit = "Db" });
         }
     }
 }

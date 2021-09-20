@@ -25,7 +25,7 @@ namespace PackageManagerAPI.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Description { get; set; }
 
-        public List<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; }
         public User User { get; set; }
 
     }

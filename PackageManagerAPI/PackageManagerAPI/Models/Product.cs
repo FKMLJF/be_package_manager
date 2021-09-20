@@ -23,8 +23,8 @@ namespace PackageManagerAPI.Models
         public int ProductQuantity { get; set; }
 
         [Column(TypeName = "nvarchar(50)")]
-        public int ProductQuantityUnit { get; set; }
+        public string ProductQuantityUnit { get; set; }
 
-        public Order Order { get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 }
