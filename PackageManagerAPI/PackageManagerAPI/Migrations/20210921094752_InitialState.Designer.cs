@@ -10,8 +10,8 @@ using PackageManagerAPI.Models;
 namespace PackageManagerAPI.Migrations
 {
     [DbContext(typeof(PackageManagerContext))]
-    [Migration("20210920181402_FixType")]
-    partial class FixType
+    [Migration("20210921094752_InitialState")]
+    partial class InitialState
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,21 @@ namespace PackageManagerAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.Property<int>("OrdersOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrdersOrderId", "ProductsProductId");
+
+                    b.HasIndex("ProductsProductId");
+
+                    b.ToTable("ProductOrders");
+                });
 
             modelBuilder.Entity("PackageManagerAPI.Models.Order", b =>
                 {
@@ -57,36 +72,15 @@ namespace PackageManagerAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<double>("ProductPrice")
                         .HasColumnType("float");
 
-                    b.Property<int>("ProductQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductQuantityUnit")
-                        .HasColumnType("nvarchar(50)");
-
                     b.HasKey("ProductId");
 
-                    b.HasIndex("OrderId");
-
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductId = 1,
-                            ProductName = "23423",
-                            ProductPrice = 1000.0,
-                            ProductQuantity = 1,
-                            ProductQuantityUnit = "Db"
-                        });
                 });
 
             modelBuilder.Entity("PackageManagerAPI.Models.User", b =>
@@ -107,6 +101,21 @@ namespace PackageManagerAPI.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.HasOne("PackageManagerAPI.Models.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PackageManagerAPI.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PackageManagerAPI.Models.Order", b =>
                 {
                     b.HasOne("PackageManagerAPI.Models.User", "User")
@@ -114,20 +123,6 @@ namespace PackageManagerAPI.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PackageManagerAPI.Models.Product", b =>
-                {
-                    b.HasOne("PackageManagerAPI.Models.Order", "Order")
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("PackageManagerAPI.Models.Order", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("PackageManagerAPI.Models.User", b =>
