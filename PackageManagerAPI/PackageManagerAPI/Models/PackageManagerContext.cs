@@ -9,9 +9,9 @@ namespace PackageManagerAPI.Models
 {
     public class PackageManagerContext : DbContext
     {
-        DbSet<User> Users { get;  set; }
-        DbSet<Product> Products { get;  set; }
-        DbSet<Order> Orders { get;  set; }
+        public DbSet<User> Users { get;  set; }
+        public DbSet<Product> Products { get;  set; }
+        public DbSet<Order> Orders { get;  set; }
 
         public PackageManagerContext(DbContextOptions<PackageManagerContext> options) : base(options)
         {
