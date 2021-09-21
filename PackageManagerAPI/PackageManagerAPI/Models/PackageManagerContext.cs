@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PackageManagerAPI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,22 @@ namespace PackageManagerAPI.Models
               .HasOne(p => p.User)
               .WithMany(b => b.Orders);
 
-            //modelBuilder.Entity<Product>().HasData(new Product { ProductId = 1,ProductName = "23423", ProductPrice = 1000, ProductQuantity = 1, ProductQuantityUnit = "Db" });
+            // SEED Data from the arukereso.hu page
+            List<Product> products = Task.Run(async () => {
+                Crawler crawler = new Crawler();
+                await crawler.ContentLoad();
+                return crawler.Products;
+            }).Result;
+
+            products.ForEach(product => 
+                modelBuilder
+                .Entity<Product>()
+                .HasData(
+                    new Product { 
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        ProductPrice = product.ProductPrice }));
+          
         }
     }
 }
