@@ -36,7 +36,7 @@ namespace PackageManagerAPI.Controllers
 
             List<OrderDTO> orders = _dbContext.Orders
                 .Where(o => o.User.UserId == userId)
-                 .Select(p => new OrderDTO()
+                .Select(p => new OrderDTO()
                  {
                     OrderID = p.OrderId,
                     PackageId = p.PackageId,
