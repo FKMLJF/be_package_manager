@@ -18,9 +18,8 @@ namespace PackageManagerAPI.Services
         public string BuildToken(string key, string issuer, User user)
         {
             var claims = new[] {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.NameIdentifier,
-            Guid.NewGuid().ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Name, user.UserName)
         };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
