@@ -4,7 +4,10 @@ using PackageManagerAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PackageManagerAPI.DTOModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,22 +25,58 @@ namespace PackageManagerAPI.Controllers
             _dbContext = dbContext;
         }
 
-        [Route("all")]
+  
         [HttpGet]
         [Produces("application/json")]
-        public List<Order> GetOrders()
+        public List<OrderDTO> GetOrders()
         {
-            //doSomething()
-            return new List<Order>();
+            int userId = -1;
+
+            Int32.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+
+            List<OrderDTO> orders = _dbContext.Orders
+                .Where(o => o.User.UserId == userId)
+                 .Select(p => new OrderDTO()
+                 {
+                    OrderID = p.OrderId,
+                    PackageId = p.PackageId,
+                    Status = p.Status,
+                    StatusShortHand = p.StatusShortHand,
+                    Description = p.Description
+                 })
+                .ToList();
+
+            return orders;
         }
 
-        [HttpGet]
-        [Route("all/{orderId}")]
+        [HttpGet("{orderId}")]
         [Produces("application/json")]
-        public Order GetOrderById(int orderId)
+        public OrderDetailDTO GetOrderById(int orderId)
         {
-            //doSomething()
-            return new Order();
+            int userId = -1;
+
+            Int32.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+
+            OrderDetailDTO orderDetailDTO = _dbContext.Orders
+                 .Include(o => o.Products)
+                 .Where(o => o.User.UserId == userId)
+                 .Where(o => o.OrderId == orderId)
+                 .Select(o => new OrderDetailDTO
+                 {
+                     OrderId = o.OrderId,
+                     PackageId = o.PackageId,
+                     Status = o.Status,
+                     StatusShortHand = o.StatusShortHand,
+                     Description = o.Description,
+                     Products = o.Products.Select(p => new ProductDTO
+                     {
+                        ProductId = p.ProductId,
+                        ProductName = p.ProductName,
+                        ProductPrice = p.ProductPrice
+                     }).ToList()
+                 }).FirstOrDefault();
+                 
+            return orderDetailDTO;
         }
 
 
