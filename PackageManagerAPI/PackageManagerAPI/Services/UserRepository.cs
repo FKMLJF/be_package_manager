@@ -1,4 +1,5 @@
-﻿using PackageManagerAPI.Models;
+﻿using PackageManagerAPI.Helpers;
+using PackageManagerAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,23 +16,26 @@ namespace PackageManagerAPI.Services
             _dbContext = dbContext;
         }
 
-        public User GetUser(User user)
+        public User GetUser(User user, out bool Verified)
         {
-            User resultUSer = new User();
-     
-                bool PAsswordVerified = BCrypt.Net.BCrypt.Verify(user.Password, _dbContext.Users
+            Verified = false;
+            var resultUSer = _dbContext.Users
                                    .Where(s => s.UserName == user.UserName)
-                                   .FirstOrDefault<User>().Password);
-                
-                if(PAsswordVerified)
-                {
-                resultUSer = _dbContext.Users
-                                   .Where(s => s.UserName == user.UserName)
-                                   .FirstOrDefault<User>();
-                }
+                                   .FirstOrDefault();
 
+            if(resultUSer == null) return new User();
+
+            bool PasswordVerified = BCrypt.Net.BCrypt.Verify(user.Password, resultUSer.Password);
+            if(PasswordVerified)
+            {
+                Verified = true;
+                return resultUSer;
+            }
+            else
+            {
+                throw new ArgumentNullException("Incorrect username or password!");
+            }
             
-            return resultUSer;
         }
     }
 }

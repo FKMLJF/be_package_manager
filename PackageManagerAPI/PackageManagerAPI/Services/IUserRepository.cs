@@ -8,6 +8,6 @@ namespace PackageManagerAPI.Services
 {
     public  interface IUserRepository
     {
-        User GetUser(User user);
+        User GetUser(User user, out bool Verifie);
     }
 }
