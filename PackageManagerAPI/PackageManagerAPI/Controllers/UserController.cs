@@ -39,24 +39,19 @@ namespace PackageManagerAPI.Controllers
         [Produces("application/json")]
         public UserDTO Login(User user)
         {
-            var validUser = _userRepository.GetUser(user);
-            if (validUser != null)
+            bool verified = false;
+            var validUser = _userRepository.GetUser(user, out verified);
+            if (verified)
             {
                 generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), validUser);
-                if (generatedToken != null)
+
+                HttpContext.Session.SetString("Token", generatedToken);
+                return new UserDTO
                 {
-                    HttpContext.Session.SetString("Token", generatedToken);
-                    return new UserDTO
-                    {
-                        Token = generatedToken,
-                        UserName = user.UserName
-                    };
-                }
-                else
-                {
-                    this.HttpContext.Response.StatusCode = 401;
-                    throw new AppException($"The username or password is incorrect");
-                }
+                    Token = generatedToken,
+                    UserName = user.UserName
+                };
+                
             }
             else
             {
