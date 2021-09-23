@@ -25,7 +25,10 @@ namespace PackageManagerAPI.Controllers
             _dbContext = dbContext;
         }
 
-  
+        /// <summary>
+        /// 
+        /// </summary>
+        /// 
         [HttpGet]
         [Produces("application/json")]
         public List<OrderDTO> GetOrders()
@@ -44,6 +47,32 @@ namespace PackageManagerAPI.Controllers
                     StatusShortHand = p.StatusShortHand,
                     Description = p.Description
                  })
+                .ToList();
+
+            return orders;
+        }
+
+        [HttpGet("find/{PackageId}")]
+        [Produces("application/json")]
+        public List<OrderDTO> FindOrdersByPackageId(string PackageId)
+
+
+        {
+            int userId = -1;
+
+            Int32.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+
+            List<OrderDTO> orders = _dbContext.Orders
+                .Where(o => o.User.UserId == userId)
+                .Where(o => EF.Functions.Like(o.PackageId, PackageId+"%"))
+                .Select(p => new OrderDTO()
+                {
+                    OrderID = p.OrderId,
+                    PackageId = p.PackageId,
+                    Status = p.Status,
+                    StatusShortHand = p.StatusShortHand,
+                    Description = p.Description
+                })
                 .ToList();
 
             return orders;
