@@ -41,12 +41,13 @@ namespace PackageManagerAPI.Controllers
                 .Where(o => o.User.UserId == userId)
                 .Select(p => new OrderDTO()
                  {
-                    OrderID = p.OrderId,
+                    OrderId = p.OrderId,
                     PackageId = p.PackageId,
                     Status = p.Status,
                     StatusShortHand = p.StatusShortHand,
-                    Description = p.Description
-                 })
+                    Description = p.Description,
+                    ItemCount = p.Products.Count
+                })
                 .ToList();
 
             return orders;
@@ -67,11 +68,12 @@ namespace PackageManagerAPI.Controllers
                 .Where(o => EF.Functions.Like(o.PackageId, PackageId+"%"))
                 .Select(p => new OrderDTO()
                 {
-                    OrderID = p.OrderId,
+                    OrderId = p.OrderId,
                     PackageId = p.PackageId,
                     Status = p.Status,
                     StatusShortHand = p.StatusShortHand,
-                    Description = p.Description
+                    Description = p.Description,
+                    ItemCount = p.Products.Count
                 })
                 .ToList();
 

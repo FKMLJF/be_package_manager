@@ -55,7 +55,7 @@ namespace PackageManagerAPI.Controllers
             }
             else
             {
-                this.HttpContext.Response.StatusCode = 401;
+                this.HttpContext.Response.StatusCode = 400;
                 throw new AppException($"The username or password is incorrect");
             }
         }
